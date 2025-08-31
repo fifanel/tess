@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREATE MT BAND FC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: #ff0000;
+            background-color: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 25px;
+            background-color: rgba(0, 0, 0, 0.85);
+            border: 2px solid #ff0000;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ff3333;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ff0000;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(145deg, #ff0000, #cc0000);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background: linear-gradient(145deg, #ff3333, #ff0000);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .option-btn {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            padding: 18px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .option-btn:hover:before {
+            left: 100%;
+        }
+        
+        .option-btn:hover {
+            background-color: #ff0000;
+            color: #000;
+            transform: scale(1.03);
+        }
+        
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            white-space: pre-line;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .result-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .result-box::-webkit-scrollbar-thumb {
+            background: #ff0000;
+            border-radius: 4px;
+        }
+        
+        .copy-btn {
+            margin-top: 15px;
+            background: linear-gradient(145deg, #000, #222);
+            color: #ff0000;
+            border: 2px solid #ff0000;
+        }
+        
+        .back-btn {
+            background: linear-gradient(145deg, #333, #222);
+            margin-top: 20px;
+        }
+        
+        .error-message {
+            color: #ff0000;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .tutorial-box {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(20, 0, 0, 0.9));
+            color: #fff;
+            position: relative;
+        }
+        
+        .tutorial-box h2 {
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        }
+        
+        .tutorial-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        .tutorial-icon {
+            color: #ff0000;
+            font-size: 18px;
+            margin-right: 12px;
+            min-width: 22px;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        
+        .tutorial-content {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .close-tutorial-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(145deg, #333, #222);
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .close-tutorial-btn:hover {
+            background: linear-gradient(145deg, #ff0000, #cc0000);
+            color: #000;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid rgba(255, 0, 0, 0.3);
+            padding-top: 12px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #ff0000;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            font-weight: bold;
+        }
+        
+        .telegram-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #0088cc, #006da0);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 30px;
+            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.5);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s;
+            animation: bounce 2s infinite;
+        }
+        
+        .telegram-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.7);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        .text-toggle {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .toggle-btn {
+            background: linear-gradient(145deg, #333, #222);
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn:hover {
+            background: linear-gradient(145deg, #ff0000, #cc0000);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <video id="video-background" autoplay muted loop>
+        <source src="https://files.catbox.moe/zobqgj.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Ikon Telegram -->
+    <a href="http://t.me/Izfapedia" target="_blank" class="telegram-icon">
+        <i class="fab fa-telegram-plane"></i>
+    </a>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="container">
+        <div class="logo">CREATE MT BAND FC</div>
+        <h1>LOGIN</h1>
+        <div class="form-group">
+            <label for="username"><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="username" placeholder="Masukkan username">
+        </div>
+        <div class="form-group">
+            <label for="password"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="password" placeholder="Masukkan password">
+        </div>
+        <button id="login-btn">MASUK</button>
+        <div id="login-error" class="error-message hidden">Username atau password salah!</div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="container hidden">
+        <div class="logo">CREATE MT BAND FC</div>
+        <h1>PILIH LAYANAN</h1>
+        <div class="options">
+            <div class="option-btn" data-option="mt-band">MT BÁND [RANDOM]</div>
+            <div class="option-btn" data-option="mt-unband">MT UNBAND [RANDOM]</div>
+            <div class="option-btn" data-option="mt-perma">MT TO PERMA</div>
+        </div>
+    </div>
+
+    <!-- MT Band Screen -->
+    <div id="mt-band-screen" class="container hidden">
+        <div class="logo">MT BÁND [RANDOM]</div>
+        <div class="form-group">
+            <label for="band-name"><i class="fas fa-signature"></i> Masukkan Nama Anda</label>
+            <input type="text" id="band-name" placeholder="Nama Anda">
+        </div>
+        <div class="form-group">
+            <label for="band-link1"><i class="fas fa-link"></i> Link 1</label>
+            <input type="text" id="band-link1" placeholder="Masukkan link pertama">
+        </div>
+        <div class="form-group">
+            <label for="band-link2"><i class="fas fa-link"></i> Link 2</label>
+            <input type="text" id="band-link2" placeholder="Masukkan link kedua">
+        </div>
+        <div class="form-group">
+            <label for="band-link3"><i class="fas fa-link"></i> Link 3</label>
+            <input type="text" id="band-link3" placeholder="Masukkan link ketiga">
+        </div>
+        <button id="create-band-btn" class="pulse">CREATE MT</button>
+        <div id="band-error" class="error-message hidden">Masukkan nama dan semua link terlebih dahulu!</div>
+    </div>
+
+    <!-- MT Band Result (Portugis) -->
+    <div id="mt-band-result-pt" class="container hidden">
+        <div class="logo">HASIL MT BÁND</div>
+        
+        <!-- Tutorial Banned di halaman hasil -->
+        <div id="tutorial-banned" class="tutorial-box">
+            <h2><i class="fas fa-exclamation-triangle"></i> Tutorial Banned</h2>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">WA Original</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">WAJIB PUNYA NO PRIB UMUR 1TH LEBIH</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">REPORT DI TITIK 3 10X</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">REPORT AKUN 5X</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">BLOCK UNBLOCK BEBAS</div>
+            </div>
+            
+            <div class="footer-note">
+                MT Ini hanya dapat digunakan untuk pengguna Whatsapp Fake Chat<br>
+                © 2025 FAIZNEL HOSTING
+            </div>
+            
+            <button class="close-tutorial-btn" id="close-tutorial">TUTUP TUTORIAL</button>
+        </div>
+        
+        <div class="text-toggle">
+            <button class="toggle-btn" onclick="toggleText()">TAMPILKAN TEKS RUSIA</button>
+        </div>
+        <div class="result-box">
+            <p>👋 Ола, удав!</p>
+            <p>Мне нравится <span id="band-result-name-pt"></span> 🤬🤬🤬, sou o dono oficial do site 🎰 SLOT GACOR #1, o favorito dos jogadores no momento!🔥</p>
+            <p>💎 Jogue de Boa — Ganhe Pesado!</p>
+            <p>Com um depósito de apenas R$ 20, você pode levar para casa prêmios de até R$ 25.000💸.</p>
+            <p>E para novos membros, os bônus são ainda mais insanos — mais prêmios, mais chances, e saques super rápidos! 😍</p>
+            <p>Por que você precisa se juntar a nós?</p>
+            <p>✅ CASHBACK de 25% — toda rodada garante retorno!</p>
+            <p>✅ SAQUE GARANTIDO — sem enrolação, sem complicação.</p>
+            <p>✅ SITE OFICIAL E CONFIÁVEL — seguro e monitorado 100%.</p>
+            <p>✅ PARCERIA OFICIAL COM O WHATSAPP — jogue sem medo de fraudes!</p>
+            <p>✅ MILHARES DE MEMBROS JÁ PROVARAM — dinheiro fluindo como água, saldo sempre cheio🤑</p>
+            <p>🎲 Rodadas Tranquilas — Ganhos Surreais</p>
+            <p>🎲 Depósito Pequeno — Prêmios Gigantes</p>
+            <p>🎲 Dinheiro Fluindo — Rumo à Riqueza!</p>
+            <p>🔥 PROMOÇÃO ESPECIAL DE HOJE!</p>
+            <p>Não perca a Noite Wild Bandito🍬 — com prêmios GIGANTESCOS para quem girar agora! 🤯🔥</p>
+            <p>💳 BÔNUS DE DEPÓSITO VIA PIX — muito mais rápido e prático!</p>
+            <p>⬇ LINK VVIP ⬇</p>
+            <p>🎰📎 <span id="band-result-link1-pt"></span></p>
+            <p>🎰📎 <span id="band-result-link2-pt"></span></p>
+            <p>🎰📎 <span id="band-result-link3-pt"></span></p>
+            <p>🔥 RELAXE, JOGUE E VENÇA — FIQUE MILIONÁRIO AINDA HOJE! 🔥</p>
+        </div>
+        <button class="copy-btn" onclick="copyContent('mt-band-result-pt')"><i class="fas fa-copy"></i> SALIN TEKS</button>
+        <button class="back-btn" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+    </div>
+
+    <!-- MT Band Result (Rusia) -->
+    <div id="mt-band-result-ru" class="container hidden">
+        <div class="logo">HASIL MT BÁND</div>
+        
+        <!-- Tutorial Banned di halaman hasil -->
+        <div id="tutorial-banned-ru" class="tutorial-box">
+            <h2><i class="fas fa-exclamation-triangle"></i> Tutorial Banned</h2>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">WA Original</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">WAJIB PUNYA NO PRIB UMUR 1TH LEBIH</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">REPORT DI TITIK 3 10X</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">REPORT AKUN 5X</div>
+            </div>
+            
+            <div class="tutorial-item">
+                <div class="tutorial-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="tutorial-content">BLOCK UNBLOCK BEBAS</div>
+            </div>
+            
+            <div class="footer-note">
+                MT Ini hanya dapat digunakan untuk pengguna Whatsapp Fake Chat<br>
+                © 2025 FAIZNEL HOSTING
+            </div>
+            
+            <button class="close-tutorial-btn" id="close-tutorial-ru">TUTUP TUTORIAL</button>
+        </div>
+        
+        <div class="text-toggle">
+            <button class="toggle-btn" onclick="toggleText()">TAMPILKAN TEKS PORTUGIS</button>
+        </div>
+        <div class="result-box">
+            <p>ПРИВЕТ, ДОРОГОЙ 🤤, ПОЗВОЛЬ ПРЕДСТАВИТЬ, Я <span id="band-result-name-ru"></span>, ИЗ ИНДОНЕЗИИ, СТРАНЫ МУСОРА! 😂, ЗДЕСЬ Я ХОЧУ РАССКАЗАТЬ ВАМ О [HOMEBET88] — САМОМ КРУПНОМ САЙТЕ ДЛЯ ИГРОКОВ В 2025 ГОДУ💯💸,</p>
+            <p>САМЫЙ ПОПУЛЯРНЫЙ САЙТ И САЙТ ДЛЯ ИГРОКОВ В 2025 ГОДУ🎰</p>
+            <p>➡️ <span id="band-result-link1-ru"></span></p>
+            <p>➡️ <span id="band-result-link2-ru"></span></p>
+            <p>➡️ <span id="band-result-link3-ru"></span></p>
+            <p>НАШ САЙТ НА 100% БЕЗОПАСЕН, БОСС, ПОТОМУ ЧТО НАШ САЙТ СТРОГО ОХРАНЯЕТСЯ ГОСУДАРСТВЕННОЙ СЛУЖБОЙ БЕЗОПАСНОСТИ. ВАШ САЙТ ТАКЖЕ ЧАСТО ПОСЕЩАЮТ ВМЕСТЕ С МАРКОМ ЦУКЕРБЕРГОМ, ВЛАДЕЛЬЦЕМ WhatsApp🔥🤑</p>
+            <p>ПОСЛЕДНИЙ ВЫИГРЫШ ИГРОК🎰</p>
+            <p>🔥 ИГРОК @faiz ВЫИГРАЛ 25 200 000!</p>
+            <p>🔥 ИГРА МАДЖОНГ (БЮДЖЕТ 50 000)</p>
+            <p>🔥 СТРАТЕГИЯ ТУРБО-ВРАЩЕНИЯ 10X, РУЧНОЕ ВРАЩЕНИЕ 30X</p>
+            <p>САМЫЙ КРУПНЫЙ ВЫИГРЫШ🎰</p>
+            <p>🔥 ИГРОК @MarkZuckerberg ВЫИГРАЛ 250 100 000</p>
+            <p>🔥 ИГРА: БАККАРА (БЮДЖЕТ 500 000)</p>
+            <p>🔥 СТРАТЕГИЯ: ИСПОЛЬЗУЙТЕ СТАВКИ ПО МЕТОДУ 1-3-2-4</p>
+            <p>УСКОРЕННЫЙ ВЫВОД И ВНЕСЕНИЕ ДЕПОЗИТОВ</p>
+            <p>✅ БЕЗ ЗАДЕРЖЕК, ВСЕГО НЕСКОЛЬКО МИНУТ</p>
+            <p>✅ ДОСТУПНО БАНКОВСКИМ ПЕРЕВОДОМ, ЧЕРЕЗ ЭЛЕКТРОННЫЙ КОШЕЛЕК (GOPAY, DANA, OVO, QRIS)</p>
+            <p>🔐 КОНФИДЕНЦИАЛЬНОСТЬ И ДАННЫЕ 💯 БЕЗОПАСНО</p>
+            <p>💯 БЕЗОПАСНО И НАДЕЖНО</p>
+            <p>🐉 Я ОПЛАЧУ ВЫВОД ЛЮБЫХ СУММ 🔥</p>
+            <p>❗ЗАРЕГИСТРИРУЙТЕСЬ СЕЙЧАС❗</p>
+            <p>🔥 И НЕ ПОЖАЛЕЕТЕ🔥</p>
+        </div>
+        <button class="copy-btn" onclick="copyContent('mt-band-result-ru')"><i class="fas fa-copy"></i> SALIN TEKS</button>
+        <button class="back-btn" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+    </div>
+
+    <!-- MT Unband Screen -->
+    <div id="mt-unband-screen" class="container hidden">
+        <div class="logo">MT UNBAND [RANDOM]</div>
+        <div class="form-group">
+            <label for="unband-number"><i class="fas fa-phone"></i> Masukkan Nomor (62XXXX)</label>
+            <input type="text" id="unband-number" placeholder="62XXXX">
+        </div>
+        <button id="create-unband-btn" class="pulse">CREATE MT</button>
+        <div id="unband-error" class="error-message hidden">Masukkan nomor yang valid (dimulai dengan 62)!</div>
+    </div>
+
+    <!-- MT Unband Result -->
+    <div id="mt-unband-result" class="container hidden">
+        <div class="logo">HASIL MT UNBAND</div>
+        <div class="result-box">
+            <p>tujuan tag :</p>
+            <p>support@support.whatsapp.com</p>
+            <br>
+            <p>Teks banding :</p>
+            <br>
+            <p>Gentili Responsabili di WhatsApp,</p>
+            <br>
+            <p>Mi rivolgo a voi per richiedere una revisione della decisione di bloccare permanentemente mio account WhatsApp [<span id="unband-result-number"></span>]. Ho ricevuto una notifica che il mio account è stato bloccato a tempo indeterminato e vorrei capire le ragioni specificas di dietro a questa decisione.</p>
+            <br>
+            <p>Dopo aver esaminato le linee guida della community e i termini di servizio di WhatsApp, non sono riuscito a identificare chiaramente le azioni yang potrebbero aver portato a questa misura. Pertanto, chiedo una revisione dettagliata del caso e, se possibile, la revoca del blocco permanente.</p>
+            <br>
+            <p>Sono disponibile a fornire ulteriori informazioni atau chiarimenti necessari per valutare la mia richiesta. Ringrazio anticipatamente per l'attenzione riservata a questa mia istanza e spero in una celere risposta.</p>
+            <br>
+            <p>Cordiali saluti,</p>
+            <p>[<span id="unband-result-name"></span>]</p>
+        </div>
+        <button class="copy-btn" onclick="copyContent('mt-unband-result')"><i class="fas fa-copy"></i> SALIN TEKS</button>
+        <button class="back-btn" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+    </div>
+
+    <!-- MT Perma Screen -->
+    <div id="mt-perma-screen" class="container hidden">
+        <div class="logo">MT TO PERMA</div>
+        <div class="form-group">
+            <label for="perma-number"><i class="fas fa-phone"></i> Masukkan Nomor (62XXXX)</label>
+            <input type="text" id="perma-number" placeholder="62XXXX">
+        </div>
+        <button id="create-perma-btn" class="pulse">CREATE MT</button>
+        <div id="perma-error" class="error-message hidden">Masukkan nomor yang valid (dimulai dengan 62)!</div>
+    </div>
+
+    <!-- MT Perma Result -->
+    <div id="mt-perma-result" class="container hidden">
+        <div class="logo">HASIL MT TO PERMA</div>
+        <div class="result-box">
+            <p>Por favor, desative o número da minha conta (<span id="perma-result-number"></span>). O meu número de WhatsApp foi banido. Por favor, ative-o novamente. O meu número pessoal. Os meus amigos e familiares estão à minha espera. A minha conta comercial está muito chateada. Por favor, Sr. Assim que o meu número for aberto, ficarei muito grato. Se tiver algum erro, peço desculpa.</p>
+            <br>
+            <p>Esta conta está envolvida em spam em massa e na promoção de jogos de azar online ilegais. Ela também envia links maliciosos, golpes financeiros e conteúdo ilegal. Por favor, bloqueie-a permanentemente para a segurança do usuário.</p>
+            <br>
+            <p>Número usado para crime: jogos de azar ilegais, fraude, spam, phishing e roubo de dados bancários. Solicito bloqueio permanente imediato.</p>
+            <br>
+            <p>O meu número de WhatsApp está imediatamente karena o número foi perdido.</p>
+        </div>
+        <button class="copy-btn" onclick="copyContent('mt-perma-result')"><i class="fas fa-copy"></i> SALIN TEKS</button>
+        <button class="back-btn" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+    </div>
+
+    <script>
+        // Data user dan password (bisa ditambah lebih dari 100)
+        const users = [
+            { username: "admin", password: "admin123" },
+            { username: "user1", password: "pass1" },
+            { username: "user2", password: "pass2" },
+            { username: "faiz", password: "handsome" },
+            { username: "test", password: "test123" }
+            // Tambahkan user dan password lainnya di sini
+        ];
+
+        // Fungsi untuk menampilkan screen tertentu dan menyembunyikan yang lain
+        function showScreen(screenId) {
+            // Sembunyikan semua screen
+            document.querySelectorAll('.container').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            
+            // Tampilkan screen yang diminta
+            if (document.getElementById(screenId)) {
+                document.getElementById(screenId).classList.remove('hidden');
+            }
+        }
+
+        // Fungsi untuk toggle antara teks Portugis dan Rusia
+        function toggleText() {
+            const ptVisible = !document.getElementById('mt-band-result-pt').classList.contains('hidden');
+            
+            if (ptVisible) {
+                showScreen('mt-band-result-ru');
+            } else {
+                showScreen('mt-band-result-pt');
+            }
+        }
+
+        // Fungsi untuk menutup tutorial
+        function closeTutorial() {
+            const tutorialPt = document.getElementById('tutorial-banned');
+            const tutorialRu = document.getElementById('tutorial-banned-ru');
+            
+            if (tutorialPt) tutorialPt.style.display = 'none';
+            if (tutorialRu) tutorialRu.style.display = 'none';
+        }
+
+        // Fungsi untuk menyalin konten
+        function copyContent(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.innerText;
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('Teks berhasil disalin!');
+                })
+                .catch(err => {
+                    console.error('Gagal menyalin teks: ', err);
+                });
+        }
+
+        // Fungsi untuk menampilkan pesan error
+        function showError(elementId) {
+            document.getElementById(elementId).classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById(elementId).classList.add('hidden');
+            }, 3000);
+        }
+
+        // Event listener untuk login
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Cek apakah user dan password sesuai
+            const userFound = users.find(user => 
+                user.username === username && user.password === password
+            );
+            
+            if (userFound) {
+                showScreen('main-menu');
+            } else {
+                showError('login-error');
+            }
+        });
+
+        // Event listener untuk pilihan layanan
+        document.querySelectorAll('.option-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const option = this.getAttribute('data-option');
+                
+                if (option === 'mt-band') {
+                    showScreen('mt-band-screen');
+                } else if (option === 'mt-unband') {
+                    showScreen('mt-unband-screen');
+                } else if (option === 'mt-perma') {
+                    showScreen('mt-perma-screen');
+                }
+            });
+        });
+
+        // Event listener untuk MT Band
+        document.getElementById('create-band-btn').addEventListener('click', function() {
+            const name = document.getElementById('band-name').value;
+            const link1 = document.getElementById('band-link1').value;
+            const link2 = document.getElementById('band-link2').value;
+            const link3 = document.getElementById('band-link3').value;
+            
+            if (name && link1 && link2 && link3) {
+                // Simpan data untuk digunakan setelah tutorial ditutup
+                document.getElementById('band-result-name-pt').textContent = name;
+                document.getElementById('band-result-link1-pt').textContent = link1;
+                document.getElementById('band-result-link2-pt').textContent = link2;
+                document.getElementById('band-result-link3-pt').textContent = link3;
+                
+                document.getElementById('band-result-name-ru').textContent = name;
+                document.getElementById('band-result-link1-ru').textContent = link1;
+                document.getElementById('band-result-link2-ru').textContent = link2;
+                document.getElementById('band-result-link3-ru').textContent = link3;
+                
+                // Tampilkan hasil secara random
+                const randomText = Math.random() > 0.5 ? 'mt-band-result-pt' : 'mt-band-result-ru';
+                showScreen(randomText);
+            } else {
+                showError('band-error');
+            }
+        });
+
+        // Event listener untuk MT Unband
+        document.getElementById('create-unband-btn').addEventListener('click', function() {
+            const number = document.getElementById('unband-number').value;
+            
+            if (number && number.startsWith('62')) {
+                document.getElementById('unband-result-number').textContent = number;
+                document.getElementById('unband-result-name').textContent = number;
+                showScreen('mt-unband-result');
+            } else {
+                showError('unband-error');
+            }
+        });
+
+        // Event listener untuk MT Perma
+        document.getElementById('create-perma-btn').addEventListener('click', function() {
+            const number = document.getElementById('perma-number').value;
+            
+            if (number && number.startsWith('62')) {
+                document.getElementById('perma-result-number').textContent = number;
+                showScreen('mt-perma-result');
+            } else {
+                showError('perma-error');
+            }
+        });
+
+        // Event listener untuk tombol close tutorial
+        document.getElementById('close-tutorial').addEventListener('click', closeTutorial);
+        document.getElementById('close-tutorial-ru').addEventListener('click', closeTutorial);
+
+        // Inisialisasi: Tampilkan login screen pertama kali
+        showScreen('login-screen');
+    </script>
+</body>
+</html>
